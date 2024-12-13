@@ -44,7 +44,7 @@ def main():
         
         # Load trained model and preprocessor
         model = joblib.load('models/weather_classifier.pkl')
-        X, *, preprocessor = preprocess_data(df)
+        X, y, preprocessor = preprocess_data(df)
         
         # Input fields based on dataset columns
         input_data = {}
