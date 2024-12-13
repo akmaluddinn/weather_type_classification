@@ -1,3 +1,12 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import matplotlib.pyplot as plt
+
+from src.data_preprocessing import load_data, preprocess_data
+from src.model_training import train_model, feature_importance
+from src.prediction import predict_weather
+
 def main():
     st.title('Weather Classification System')
     st.sidebar.header('Navigation')
@@ -66,78 +75,11 @@ def main():
             input_data['Location'] = st.selectbox('Location', ['inland', 'mountain', 'coastal'])
         
         if st.button('Predict Weather'):
-            # Prediction results with detailed visualization
             prediction, probability = predict_weather(model, preprocessor, input_data)
             
-            # Weather Prediction Results Container
             st.subheader('Prediction Results')
-            
-            # Main Prediction Display
-            col1, col2 = st.columns([3, 1])
-            
-            with col1:
-                st.markdown(f"## 🌦️ {prediction}")
-                st.progress(probability)
-                st.markdown(f"**Confidence:** {probability*100:.2f}%")
-            
-            # Weather Condition Visualization
-            with col2:
-                # Select weather icon based on prediction
-                weather_icons = {
-                    'Sunny': '☀️',
-                    'Rainy': '🌧️', 
-                    'Cloudy': '☁️',
-                    'Stormy': '⛈️',
-                    'Snowy': '❄️'
-                }
-                icon = weather_icons.get(prediction, '🌈')
-                st.markdown(f"# {icon}")
-            
-            # Detailed Weather Insights
-            st.markdown("### 📊 Detailed Insights")
-            
-            # Recommendation based on weather type
-            weather_recommendations = {
-                'Sunny': "Perfect day for outdoor activities! Don't forget sunscreen and stay hydrated.",
-                'Rainy': "Carry an umbrella and wear waterproof clothing. Road conditions might be slippery.",
-                'Cloudy': "Prepare for potential weather changes. Layered clothing is recommended.",
-                'Stormy': "Stay indoors if possible. Avoid open areas and be prepared for sudden weather changes.",
-                'Snowy': "Dress in warm layers. Check road conditions before traveling."
-            }
-            
-            # Detailed condition breakdown
-            col_detail1, col_detail2 = st.columns(2)
-            
-            with col_detail1:
-                st.markdown("#### 🌡️ Temperature Analysis")
-                st.write(f"**Input Temperature:** {input_data['Temperature']}°C")
-                
-                # Temperature interpretation
-                if input_data['Temperature'] < 0:
-                    st.warning("Extremely cold temperature")
-                elif 0 <= input_data['Temperature'] < 10:
-                    st.info("Cold temperature")
-                elif 10 <= input_data['Temperature'] < 20:
-                    st.success("Cool temperature")
-                else:
-                    st.error("Warm to hot temperature")
-            
-            with col_detail2:
-                st.markdown("#### 💨 Wind and Humidity")
-                st.write(f"**Wind Speed:** {input_data['Wind Speed']} km/h")
-                st.write(f"**Humidity:** {input_data['Humidity']}%")
-                
-                # Wind speed interpretation
-                if input_data['Wind Speed'] > 30:
-                    st.warning("Strong winds detected")
-                elif input_data['Wind Speed'] > 15:
-                    st.info("Moderate winds")
-                else:
-                    st.success("Light winds")
-            
-            # Recommendation section
-            st.markdown("### 🚨 Recommendations")
-            st.info(weather_recommendations.get(prediction, "Stay prepared for various weather conditions."))
+            st.success(f'Predicted Weather: {prediction}')
+            st.info(f'Prediction Confidence: {probability*100:.2f}%')
 
 if __name__ == '__main__':
     main()
