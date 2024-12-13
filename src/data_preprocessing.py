@@ -47,4 +47,10 @@ def preprocess_data(df):
     # Transform features
     X_transformed = preprocessor.fit_transform(X)
     
-    return X_transformed, y, preprocessor
+    # Reconstruct DataFrame with appropriate column names
+    # Get feature names from transformers
+    cat_feature_names = preprocessor.named_transformers_['cat']['onehot'].get_feature_names_out(categorical_features)
+    feature_names = numeric_features + cat_feature_names.tolist()
+    X_transformed_df = pd.DataFrame(X_transformed, columns=feature_names)
+    
+    return X_transformed_df, y, preprocessor
